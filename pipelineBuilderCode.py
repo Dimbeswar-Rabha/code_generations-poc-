@@ -1,5 +1,5 @@
 class PipelineBuilderCode:
-    def __init__(self, file_name,line):
+    def __init__(self, file_name, line):
         self.line = line
         self.file_name = file_name
 
@@ -21,7 +21,7 @@ def get_mqtt_trash_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attrib
     pipeline = pipeline_builder.build().configure_for_environment(mqtt_broker)
     return pipeline, mqtt_source"""
         elif self.file_name == 'test_influxdb_destination.py':
-            stage_attributes = ',\n**stage_attributesn' if 'stage_attributes' in self.line else ''
+            stage_attributes = ',**stage_attributesn' if 'stage_attributes' in self.line else ''
 
             line = f"""
 # util function            
