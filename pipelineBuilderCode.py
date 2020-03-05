@@ -42,5 +42,24 @@ def get_pipeline_and_destination_stage(raw_dict, sdc_builder, influxdb, create_d
     dev_raw_data_source >> influxdb_destination
     pipeline = builder.build().configure_for_environment(influxdb)
     return pipeline, influxdb_destination"""
+        elif self.file_name == 'test_mqtt_publisher_destination.py':
+            if 'stage_attributes' in self.line:
+                stage_attributes = ', **stage_attributes'
+                source_set_attributes = 'mqtt_source.set_attributes(**stage_attributes)'
+            else:
+                stage_attributes=''
+                source_set_attributes=''
+            line =f"""
+#util function 
+
+def get_dev_raw_data_source_to_mqtt_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attributes}):
+    pipeline_builder = sdc_builder.get_pipeline_builder()
+    raw_str = 'dummy_value'
+    dev_raw_data_source = pipeline_builder.add_stage('Dev Raw Data Source')
+    dev_raw_data_source.set_attributes(data_format='TEXT', raw_data=raw_str)
+    mqtt_target = pipeline_builder.add_stage('MQTT Publisher')
+    {source_set_attributes}
+    dev_raw_data_source >> mqtt_target
+    pipeline = pipeline_builder.build().configure_for_environment(mqtt_broker)"""
 
         return line

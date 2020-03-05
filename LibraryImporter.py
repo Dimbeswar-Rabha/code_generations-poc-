@@ -3,10 +3,10 @@ class Import:
         self.file_name = file_name
 
     def import_library(self):
-        if self.file_name == 'test_mqtt_subscriber_origin.py':
+        if self.file_name in ['test_mqtt_subscriber_origin.py', 'test_mqtt_publisher_destination.py']:
             line = ('import pytest\n'
                     'import time\n'
-                    '            \n'
+                    '\n'
                     'from streamsets.testframework.decorators import stub\n'
                     'from streamsets.testframework.markers import mqtt')
         elif self.file_name == 'test_influxdb_destination.py':
