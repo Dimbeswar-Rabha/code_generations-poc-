@@ -23,7 +23,7 @@ class Body_code:
     data_topic = 'mqtt_subscriber_topic'
     try:
         mqtt_broker.initialize(initial_topics=[data_topic])
-        pipeline, mqtt_source = get_mqtt_trash_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attributes})
+        pipeline ,mqtt_source = get_mqtt_trash_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attributes})
         #want to set attribute after configure for environment? set here.
         sdc_executor.add_pipeline(pipeline)
         running_snapshot = sdc_executor.capture_snapshot(pipeline, start_pipeline=True, batches=1, wait=False)
@@ -61,12 +61,12 @@ class Body_code:
 
         elif self.file_name == 'test_mqtt_publisher_destination.py':
 
-            line = f"""{self.line[0:len(self.line)-3]}, mqtt_broker ):
+            line = f"""{self.line[0:len(self.line)-3]}, mqtt_broker):
     {input_date}       
     data_topic = 'mqtt_subscriber_topic'
     try:
         mqtt_broker.initialize(initial_topics=[data_topic])
-        pipeline, mqtt_source = get_dev_raw_data_source_to_mqtt_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attributes})
+        pipeline, mqtt_target, dev_raw_data_source = get_pipeline_and_stages(sdc_builder,data_topic,mqtt_broker{stage_attributes})
         #want to set attribute after configure for environment? set here.
         sdc_executor.add_pipeline(pipeline)
         snapshot = sdc_executor.capture_snapshot(pipeline, start_pipeline=True).snapshot
@@ -83,6 +83,33 @@ class Body_code:
             #assert msg.topic == data_topic
     finally:
         mqtt_broker.destroy()"""
+
+        elif self.file_name == 'test_mongodb_origin.py':
+            line = f"""{self.line[0:len(self.line)-3]}, mongodb):
+    try:
+        pipeline, mongodb_origin = get_mongodb_to_trash_pipeline_and_stage(sdc_builder, mongodb{stage_attributes})
+        # want to set attributes after configure for env? set here
+        # MongoDB and PyMongo add '_id' to the dictionary entries e.g. docs_in_database
+        # when used for inserting in collection. Hence the deep copy.
+        docs_in_database = copy.deepcopy(ORIG_DOCS)
+        # Create documents in MongoDB using PyMongo.
+        # First a database is created. Then a collection is created inside that database.
+        # Then documents are created in that collection.
+        logger.info('Adding documents into %s collection using PyMongo...', mongodb_origin.collection)
+        mongodb_database = mongodb.engine[mongodb_origin.database]
+        mongodb_collection = mongodb_database[mongodb_origin.collection]
+        insert_list = [mongodb_collection.insert_one(doc) for doc in docs_in_database]
+        assert len(insert_list) == len(docs_in_database)
+
+        # Start pipeline and verify the documents using snaphot.
+        sdc_executor.add_pipeline(pipeline)
+        snapshot = sdc_executor.capture_snapshot(pipeline=pipeline, start_pipeline=True).snapshot
+        sdc_executor.stop_pipeline(pipeline)
+        # asserts your expectations 
+
+    finally:
+        logger.info('Dropping %s database...', mongodb_origin.database)
+        mongodb.engine.drop_database(mongodb_origin.database)"""
         return line
 
 

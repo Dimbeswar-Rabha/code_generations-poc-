@@ -22,6 +22,16 @@ class Import:
                     'logger = logging.getLogger(__name__)'
                     )
 
+        elif self.file_name == 'test_mongodb_origin.py':
+            line = ('import copy\n'
+                    'import logging\n'
+                    'import pytest\n'
+                    'import time\n'
+                    '\n'
+                    'from streamsets.testframework.decorators import stub\n'
+                    'from streamsets.testframework.markers import mongodb, sdc_min_version\n'
+                    'from streamsets.testframework.utils import get_random_string\n\n'
+                    'logger = logging.getLogger(__name__)')
         return line
 
 
