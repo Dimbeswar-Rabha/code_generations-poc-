@@ -8,5 +8,7 @@ change the DataCollectorPath to your data collector folder path.
   
   ii)how to generate code ?
    python main.py git_branch stage_file_name.py testCaseName
+   
+   
    eg:
    python main.py SDC-11111 test_influxdb_destination.py test_database_name 
