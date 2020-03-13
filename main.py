@@ -11,7 +11,7 @@ if __name__ == '__main__':
     gitBranch = args.gitBranch
     file_name = args.file_name
     test_case_name = args.testCaseName
-    create_git_branch(gitBranch,file_name,test_case_name)
+    create_git_branch(gitBranch, file_name, test_case_name)
 
 
 

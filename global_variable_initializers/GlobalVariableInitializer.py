@@ -7,7 +7,7 @@ class GlobalVariable:
     def __init__(self, file_path, test_case_name, file_name):
         self.file_path = file_path
         self.test_case_name = test_case_name
-        self.file_name= file_name
+        self.file_name = file_name
 
     def set_global_variable(self):
         got_first_stub = False
