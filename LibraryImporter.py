@@ -51,7 +51,7 @@ class Import:
                     'from streamsets.testframework.utils import get_random_string\n'
                     'from streamsets.sdk.sdc_api import StartError\n\n'
                     'logger = logging.getLogger(__name__)\n'
-                    'logger.setLevel(logging.DEBUG))')
+                    'logger.setLevel(logging.DEBUG)')
 
         return line
 

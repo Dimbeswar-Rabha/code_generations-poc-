@@ -3,7 +3,7 @@ import sys
 
 
 class Body_code:
-    def __init__(self, file_name,function):
+    def __init__(self, file_name, function):
         self.file_name = file_name
         self.line = function
         self.input_data = ''
@@ -20,9 +20,13 @@ class Body_code:
         # stage_attributes = ', **stage_attributes' if 'stage_attributes' in self.line else ""
         stage_attributes = ', **stage_attributes'
         if self.file_name == 'test_mqtt_subscriber_origin.py':
+            defualt_stage_attributes = """
+    stage_attributes={'topic_filter':data_topic}"""
+            set_attribute = "stage_attributes.update({'topic_filter':[data_topic]})" if 'stage_attributes' in self.line else defualt_stage_attributes
             line = f"""{self.line[0:len(self.line)-3]}, mqtt_broker):
     {self.input_data}
     data_topic = 'mqtt_subscriber_topic'
+    {set_attribute}
     try:
         mqtt_broker.initialize(initial_topics=[data_topic])
         pipeline ,mqtt_source = get_mqtt_trash_pipeline_and_mqtt_stage(sdc_builder, mqtt_broker{stage_attributes})
@@ -220,5 +224,5 @@ class Body_code:
         finally:
             channel.close()
             connection.close()"""
-            
+
         return line

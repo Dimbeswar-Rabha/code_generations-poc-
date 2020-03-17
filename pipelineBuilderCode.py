@@ -58,10 +58,19 @@ def get_pipeline_and_stages(sdc_builder, data_topic, mqtt_broker{stage_attribute
     return pipeline, mqtt_target, dev_raw_data_source"""
 
         elif self.file_name == 'test_mongodb_origin.py':
+            default_stage_attributes = """
+    stage_attributes={capped_collection=False,
+                      database=get_random_string(ascii_letters, 5),
+                      collection=get_random_string(ascii_letters, 10)}"""
+            set_attributes = """
+    stage_attributes.update({capped_collection=False,
+                            database=get_random_string(ascii_letters, 5),
+                            collection=get_random_string(ascii_letters, 10)})""" if 'stage_attributes' in self.line else default_stage_attributes
             line = f"""
 # util function
 def get_mongodb_to_trash_pipeline_and_stage(sdc_builder, mongodb{stage_attributes}):
     {pipeline_builder}
+    {set_attributes}
     pipeline_builder.add_error_stage('Discard')
     mongodb_origin = pipeline_builder.add_stage('MongoDB', type='origin')
     mongodb_origin.set_attributes(capped_collection=False,
@@ -125,6 +134,24 @@ def get_pipeline_and_rabbitmq_producer_destination_stage(sdc_builder, DATA, rabb
     pipeline = builder.build().configure_for_environment(rabbitmq)
     return pipeline, rabbitmq_producer
     """
+        elif self.file_name == 'test_record_deduplicator_processor.py':
+            line =f"""
+# util function 
+def get_pipeline_and_deduplicator_processor_stage(sdc_builder, ):
+    pipeline_builder = sdc_builder.get_pipeline_builder()
+    dev_raw_data_source = pipeline_builder.add_stage('Dev Raw Data Source')
+    dev_raw_data_source.set_attributes(data_format='JSON',
+                                       json_content='ARRAY_OBJECTS',
+                                       raw_data=json.dumps(RECORD_DEDUPLICATIOR_RAW_DATA))
+    record_deduplicator = pipeline_builder.add_stage('Record Deduplicator')
+    trash_1 = pipeline_builder.add_stage('Trash')
+    trash_2 = pipeline_builder.add_stage('Trash')
+
+    dev_raw_data_source >> record_deduplicator >> trash_1
+
+
+
+"""
 
         return line
 
